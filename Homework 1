@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb 28 18:38:22 2022
+
+@author: annacoffman
+"""
+import pandas as pd
+import numpy as np 
+
+import statsmodels.formula.api as sm # module for stats models
+from statsmodels.iolib.summary2 import summary_col # module for presenting stats models outputs nicely
+
+#%%
+def price2ret(prices,retType='simple'):
+    if retType == 'simple':
+        ret = (prices/prices.shift(1))-1
+    else:
+        ret = np.log(prices/prices.shift(1))
+    return ret
+#%%
+from pathlib import Path
+import sys
+import os
+
+home=str(Path.home())
+print(home)
+
+# %%
+if sys.platform == 'linux':
+    inputDir = '/Grad Semester 2/Data_Analytics' 
+elif sys.platform == 'win32':
+    inputDir = '\\datasets\stocks\\' 
+else :
+    inputDir = '/Documents/Grad Semester 2/Data_Analytics/'
+   
+    
+fullDir = home+inputDir
+print(fullDir)
+
+# %%
+stkName = 'AMZN'
+fileName = 'stk_' + stkName + '.csv'
+readfile = fullDir + fileName 
+
+df_stk = pd.read_csv(readfile,index_col='Date',parse_dates=True)
+df_stk.head()
+
+df_stk['AMZN_Returns'] = price2ret(df_stk[['Close']])
+df_stk = df_stk.dropna()
+df_stk.head()
+
+df_AMZN = df_stk
+
+# %%
+stkName = 'TJX'
+fileName = 'stk_' + stkName + '.csv'
+readfile = fullDir + fileName 
+
+df_stk = pd.read_csv(readfile,index_col='Date',parse_dates=True)
+df_stk.head()
+
+df_stk['TJX_Returns'] = price2ret(df_stk[['Close']])
+df_stk = df_stk.dropna()
+df_stk.head()
+
+df_TJX = df_stk
+
+# %%
+stkName = 'WMT'
+fileName = 'stk_' + stkName + '.csv'
+readfile = fullDir + fileName 
+
+df_stk = pd.read_csv(readfile,index_col='Date',parse_dates=True)
+df_stk.head()
+
+df_stk['WMT_Returns'] = price2ret(df_stk[['Close']])
+df_stk = df_stk.dropna()
+df_stk.head()
+
+df_WMT = df_stk
+
+#%%
+stkName = 'AMZN'
+fileName = 'stk_' + stkName + '_Y.csv'
+readfile = fullDir + fileName 
+
+df_stk = pd.read_csv(readfile,index_col='Date',parse_dates=True)
+df_stk.head()
+
+df_stk['AMZN_Returns'] = price2ret(df_stk[['Close']])
+df_stk = df_stk.dropna()
+df_stk.head()
+
+df_AMZN_Y = df_stk
+
+#%%
+stkName = 'TJX'
+fileName = 'stk_' + stkName + '_Y.csv'
+readfile = fullDir + fileName 
+
+df_stk = pd.read_csv(readfile,index_col='Date',parse_dates=True)
+df_stk.head()
+
+df_stk['TJX_Returns'] = price2ret(df_stk[['Close']])
+df_stk = df_stk.dropna()
+df_stk.head()
+
+df_TJX_Y = df_stk
+
+#%%
+stkName = 'WMT'
+fileName = 'stk_' + stkName + '_Y.csv'
+readfile = fullDir + fileName 
+
+df_stk = pd.read_csv(readfile,index_col='Date',parse_dates=True)
+df_stk.head()
+
+df_stk['WMT_Returns'] = price2ret(df_stk[['Close']])
+df_stk = df_stk.dropna()
+df_stk.head()
+
+df_WMT_Y = df_stk
+
+# %%
+df_merge= pd.merge(df_AMZN, df_TJX, left_index=True, right_index=True)
+
+df_wrds= pd.merge(df_merge, df_WMT, left_index=True, right_index=True)
+
+
+df_merge= pd.merge(df_AMZN_Y, df_TJX_Y, left_index=True, right_index=True)
+df_yahoo= pd.merge(df_merge, df_WMT_Y, left_index=True, right_index=True)
+# %%
+import matplotlib.pyplot as plt 
+
+plt.figure()
+plt.plot(df_wrds['AMZN_Returns'], color='pink',)
+plt.plot(df_wrds['TJX_Returns'], color='blue',)
+plt.plot(df_wrds['WMT_Returns'], color='purple',)
+plt.xlabel('Date')
+plt.ylabel('Return')
+plt.title('WRDS Data')
+ 
+
+plt.figure()
+plt.plot(df_yahoo['AMZN_Returns'], color='pink',)
+plt.plot(df_yahoo['TJX_Returns'], color='blue',)
+plt.plot(df_yahoo['WMT_Returns'], color='purple',)
+plt.xlabel('Date')
+plt.ylabel('Return')
+plt.title('Yahoo Data')
+plt.show()
+
